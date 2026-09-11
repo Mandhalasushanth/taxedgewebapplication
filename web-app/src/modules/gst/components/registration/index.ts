@@ -2,7 +2,16 @@ export { GSTRegistrationStepper } from './GSTRegistrationStepper/GSTRegistration
 export type { StepItem } from './GSTRegistrationStepper/GSTRegistrationStepper'
 
 export { GSTStepBusiness } from './GSTStepBusiness/GSTStepBusiness'
-export type { BusinessFormData } from './GSTStepBusiness/GSTStepBusiness'
+export type { GstBusinessFormData, BusinessFormData } from './GSTStepBusiness/GSTStepBusiness'
+
+export { GSTBusinessDetails } from './GSTBusinessDetails/GSTBusinessDetails'
+export type { GSTBusinessDetailsProps } from './GSTBusinessDetails/GSTBusinessDetails'
+
+export { GSTBankDetails } from './GSTBankDetails/GSTBankDetails'
+export type { GSTBankDetailsProps } from './GSTBankDetails/GSTBankDetails'
+
+export { GSTAuthorisedSignatory } from './GSTAuthorisedSignatory/GSTAuthorisedSignatory'
+export type { GSTAuthorisedSignatoryProps } from './GSTAuthorisedSignatory/GSTAuthorisedSignatory'
 
 export { GSTStepAddressBank } from './GSTStepAddressBank/GSTStepAddressBank'
 export type { AddressBankFormData } from './GSTStepAddressBank/GSTStepAddressBank'
@@ -18,3 +27,6 @@ export { GSTStepReview } from './GSTStepReview/GSTStepReview'
 export { GSTPaymentSuccess } from './GSTPaymentSuccess/GSTPaymentSuccess'
 export { GSTOrderSummary } from './GSTOrderSummary/GSTOrderSummary'
 export type { GSTOrderSummaryProps } from './GSTOrderSummary/GSTOrderSummary'
+
+export { GSTSidebar } from './GSTSidebar/GSTSidebar'
+export type { GSTSidebarProps } from './GSTSidebar/GSTSidebar'
