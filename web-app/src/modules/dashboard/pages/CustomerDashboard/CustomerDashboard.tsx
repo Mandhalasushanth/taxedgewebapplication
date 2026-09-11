@@ -1,17 +1,11 @@
 import { EmptyState, Loader } from '@shared/components'
 import { useAuthStore } from '@store/index'
-
 import {
   DashboardHero,
-  DashboardStats,
-  DeadlineBanner,
-  PendingOnYou,
   QuickServices,
-  RecentApplications,
-  UpcomingDeadlines,
+  DashboardOverviewGrid,
 } from '../../components'
 import { useDashboardSummary } from '../../hooks/useDashboardSummary'
-import { quickServices } from '../../services/dashboardService'
 import './CustomerDashboard.css'
 
 export const CustomerDashboard = () => {
@@ -25,22 +19,21 @@ export const CustomerDashboard = () => {
 
   return (
     <div className="dashboard">
-      <DashboardHero userName={user?.fullName ?? 'there'} brief={data.brief} />
+      {/* 1. Hero Banner */}
+      <DashboardHero userName={user?.fullName || 'Sagarika'} brief={data.brief} />
 
-      {data.deadline && <DeadlineBanner deadline={data.deadline} />}
+      {/* 2. Quick Services */}
+      <QuickServices />
 
-      <DashboardStats stats={data.stats} />
-
-      <QuickServices services={quickServices} />
-
-      <RecentApplications applications={data.recentApplications} />
-
-      <div className="dashboard__columns">
-        <PendingOnYou tasks={data.pendingTasks} />
-        <UpcomingDeadlines deadlines={data.upcomingDeadlinesList} />
-      </div>
+      {/* 3. 2x2 Overview Grid */}
+      <DashboardOverviewGrid
+        applications={data.recentApplications}
+        pendingTasks={data.pendingTasks}
+        deadlines={data.upcomingDeadlinesList}
+      />
     </div>
   )
 }
 
 export default CustomerDashboard
+

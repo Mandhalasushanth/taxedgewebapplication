@@ -47,6 +47,12 @@ const GridIcon = () => (
   </svg>
 )
 
+const ChevronDownIcon = () => (
+  <svg className="shell__chevron-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+)
+
 export const DashboardLayout = () => {
   const user = useAuthStore((state) => state.user)
   const signOut = useAuthStore((state) => state.signOut)
@@ -179,152 +185,169 @@ export const DashboardLayout = () => {
               {isMobileNavOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
 
-            <nav className="shell__breadcrumb" aria-label="Breadcrumb">
-              {location.pathname === routePaths.gst.filing ||
-              location.pathname === routePaths.gst.filePeriod ||
-              location.pathname === routePaths.gst.fileUpload ||
-              location.pathname === routePaths.gst.fileReview ||
-              location.pathname === routePaths.gst.filePayment ||
-              location.pathname === routePaths.gst.fileSuccess ||
-              location.pathname === routePaths.gst.fileReceipt ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <Link to={routePaths.gst.filing}>Filing</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">
-                    {location.pathname === routePaths.gst.fileUpload
-                      ? 'Documents'
-                      : location.pathname === routePaths.gst.fileReview
-                        ? 'Review'
-                        : location.pathname === routePaths.gst.filePayment
-                          ? 'Payment'
-                          : location.pathname === routePaths.gst.fileSuccess
-                            ? 'Confirmation'
-                            : location.pathname === routePaths.gst.fileReceipt
-                              ? 'Receipt'
-                              : 'Period'}
-                  </span>
-                </>
-              ) : location.pathname === routePaths.gst.registration ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">Registration</span>
-                </>
-              ) : location.pathname === routePaths.gst.returns ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">Returns</span>
-                </>
-              ) : location.pathname.startsWith('/gst/') && location.pathname.endsWith('/track') ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">Track Application</span>
-                </>
-              ) : location.pathname === routePaths.gst.amendment ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">Amendment</span>
-                </>
-              ) : location.pathname === routePaths.gst.certificate ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">Certificate</span>
-                </>
-              ) : location.pathname === routePaths.gst.compliance ||
-                location.pathname === routePaths.gst.complianceSubmitted ||
-                (location.pathname.startsWith(routePaths.gst.compliance) && (location.search.includes('submitted') || location.pathname.includes('submitted'))) ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  {location.pathname === routePaths.gst.complianceSubmitted || location.search.includes('submitted') ? (
-                    <>
-                      <Link to={routePaths.gst.compliance}>Compliance</Link>
-                      <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                      <span className="shell__breadcrumb-current">Submitted</span>
-                    </>
-                  ) : (
-                    <span className="shell__breadcrumb-current">Compliance</span>
-                  )}
-                </>
-              ) : location.pathname === routePaths.gst.cancellation ||
-                location.pathname === routePaths.gst.cancellationSubmitted ||
-                (location.pathname.startsWith(routePaths.gst.cancellation) && (location.search.includes('submitted') || location.pathname.includes('submitted'))) ? (
-                <>
-                  <Link to={routePaths.gst.root}>GST</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  {location.pathname === routePaths.gst.cancellationSubmitted || location.search.includes('submitted') ? (
-                    <>
-                      <Link to={routePaths.gst.cancellation}>Cancellation</Link>
-                      <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                      <span className="shell__breadcrumb-current">Submitted</span>
-                    </>
-                  ) : (
-                    <span className="shell__breadcrumb-current">Cancellation</span>
-                  )}
-                </>
-              ) : location.pathname === routePaths.gst.root ? (
-                <span className="shell__breadcrumb-current">GST</span>
-              ) : location.pathname.startsWith('/itr/') ? (
-                <>
-                  <Link to={routePaths.itr.root}>ITR &amp; TDS</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">
-                    {location.pathname === routePaths.itr.fileItr
-                      ? 'File ITR'
-                      : location.pathname === routePaths.itr.trackMyReturn
-                        ? 'Track Return'
-                        : location.pathname === routePaths.itr.itrFiling
-                          ? 'ITR Filing'
-                          : location.pathname === routePaths.itr.tdsRefund
-                            ? 'TDS Refund'
-                            : location.pathname === routePaths.itr.previousYearItr
-                              ? 'Previous Year ITR'
-                              : location.pathname === routePaths.itr.revisedItr
-                                ? 'Revised ITR'
-                                : location.pathname === routePaths.itr.taxNoticeAssistance
-                                  ? 'Notice Assistance'
-                                  : location.pathname === routePaths.itr.tdsRefundEstimator
-                                    ? 'TDS Refund Estimator'
-                                    : location.pathname === routePaths.itr.taxComputation
-                                      ? 'Tax Computation'
-                                      : 'Filing'}
-                  </span>
-                </>
-              ) : location.pathname === routePaths.itr.root ? (
-                <span className="shell__breadcrumb-current">ITR &amp; TDS</span>
-              ) : currentNav.sectionTitle === 'Services' ? (
-                <>
-                  <Link to={routePaths.services}>Services</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">{currentNav.label}</span>
-                </>
-              ) : currentNav.label === 'Dashboard' ? (
-                <span className="shell__breadcrumb-current">Dashboard</span>
-              ) : (
-                <>
-                  <Link to={routePaths.dashboard}>Home</Link>
-                  <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
-                  <span className="shell__breadcrumb-current">{currentNav.label}</span>
-                </>
-              )}
-            </nav>
+            {location.pathname === routePaths.dashboard ? (
+              <label className="shell__search">
+                <SearchIcon />
+                <input
+                  type="search"
+                  placeholder="Search services, applications, documents..."
+                  aria-label="Search services, applications, documents"
+                />
+              </label>
+            ) : (
+              <nav className="shell__breadcrumb" aria-label="Breadcrumb">
+                {location.pathname === routePaths.gst.filing ||
+                location.pathname === routePaths.gst.filePeriod ||
+                location.pathname === routePaths.gst.fileUpload ||
+                location.pathname === routePaths.gst.fileReview ||
+                location.pathname === routePaths.gst.filePayment ||
+                location.pathname === routePaths.gst.fileSuccess ||
+                location.pathname === routePaths.gst.fileReceipt ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <Link to={routePaths.gst.filing}>Filing</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">
+                      {location.pathname === routePaths.gst.fileUpload
+                        ? 'Documents'
+                        : location.pathname === routePaths.gst.fileReview
+                          ? 'Review'
+                          : location.pathname === routePaths.gst.filePayment
+                            ? 'Payment'
+                            : location.pathname === routePaths.gst.fileSuccess
+                              ? 'Confirmation'
+                              : location.pathname === routePaths.gst.fileReceipt
+                                ? 'Receipt'
+                                : 'Period'}
+                    </span>
+                  </>
+                ) : location.pathname === routePaths.gst.registration ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">Registration</span>
+                  </>
+                ) : location.pathname === routePaths.gst.returns ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">Returns</span>
+                  </>
+                ) : location.pathname.startsWith('/gst/') && location.pathname.endsWith('/track') ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">Track Application</span>
+                  </>
+                ) : location.pathname === routePaths.gst.amendment ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">Amendment</span>
+                  </>
+                ) : location.pathname === routePaths.gst.certificate ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">Certificate</span>
+                  </>
+                ) : location.pathname === routePaths.gst.compliance ||
+                  location.pathname === routePaths.gst.complianceSubmitted ||
+                  (location.pathname.startsWith(routePaths.gst.compliance) && (location.search.includes('submitted') || location.pathname.includes('submitted'))) ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    {location.pathname === routePaths.gst.complianceSubmitted || location.search.includes('submitted') ? (
+                      <>
+                        <Link to={routePaths.gst.compliance}>Compliance</Link>
+                        <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                        <span className="shell__breadcrumb-current">Submitted</span>
+                      </>
+                    ) : (
+                      <span className="shell__breadcrumb-current">Compliance</span>
+                    )}
+                  </>
+                ) : location.pathname === routePaths.gst.cancellation ||
+                  location.pathname === routePaths.gst.cancellationSubmitted ||
+                  (location.pathname.startsWith(routePaths.gst.cancellation) && (location.search.includes('submitted') || location.pathname.includes('submitted'))) ? (
+                  <>
+                    <Link to={routePaths.gst.root}>GST</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    {location.pathname === routePaths.gst.cancellationSubmitted || location.search.includes('submitted') ? (
+                      <>
+                        <Link to={routePaths.gst.cancellation}>Cancellation</Link>
+                        <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                        <span className="shell__breadcrumb-current">Submitted</span>
+                      </>
+                    ) : (
+                      <span className="shell__breadcrumb-current">Cancellation</span>
+                    )}
+                  </>
+                ) : location.pathname === routePaths.gst.root ? (
+                  <span className="shell__breadcrumb-current">GST</span>
+                ) : location.pathname.startsWith('/itr/') ? (
+                  <>
+                    <Link to={routePaths.itr.root}>ITR &amp; TDS</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">
+                      {location.pathname === routePaths.itr.fileItr
+                        ? 'File ITR'
+                        : location.pathname === routePaths.itr.trackMyReturn
+                          ? 'Track Return'
+                          : location.pathname === routePaths.itr.itrFiling
+                            ? 'ITR Filing'
+                            : location.pathname === routePaths.itr.tdsRefund
+                              ? 'TDS Refund'
+                              : location.pathname === routePaths.itr.previousYearItr
+                                ? 'Previous Year ITR'
+                                : location.pathname === routePaths.itr.revisedItr
+                                  ? 'Revised ITR'
+                                  : location.pathname === routePaths.itr.taxNoticeAssistance
+                                    ? 'Notice Assistance'
+                                    : location.pathname === routePaths.itr.tdsRefundEstimator
+                                      ? 'TDS Refund Estimator'
+                                      : location.pathname === routePaths.itr.taxComputation
+                                        ? 'Tax Computation'
+                                        : 'Filing'}
+                    </span>
+                  </>
+                ) : location.pathname === routePaths.itr.root ? (
+                  <span className="shell__breadcrumb-current">ITR &amp; TDS</span>
+                ) : currentNav.sectionTitle === 'Services' ? (
+                  <>
+                    <Link to={routePaths.services}>Services</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">{currentNav.label}</span>
+                  </>
+                ) : currentNav.label === 'Dashboard' ? (
+                  <span className="shell__breadcrumb-current">Dashboard</span>
+                ) : (
+                  <>
+                    <Link to={routePaths.dashboard}>Home</Link>
+                    <span className="shell__breadcrumb-sep" aria-hidden="true">→</span>
+                    <span className="shell__breadcrumb-current">{currentNav.label}</span>
+                  </>
+                )}
+              </nav>
+            )}
           </div>
 
           <div className="shell__header-actions">
-            <label className="shell__search">
-              <SearchIcon />
-              <input type="search" placeholder="Search applications, documents..." />
-            </label>
+            {location.pathname !== routePaths.dashboard && (
+              <label className="shell__search shell__search--compact">
+                <SearchIcon />
+                <input
+                  type="search"
+                  placeholder="Search services, applications, documents..."
+                  aria-label="Search services, applications, documents"
+                />
+              </label>
+            )}
 
             <button className="shell__icon-button" type="button" aria-label="Notifications" title="Notifications">
               <BellIcon />
-              <span className="shell__icon-dot" aria-hidden="true" />
+              <span className="shell__badge-pill" aria-hidden="true">0</span>
             </button>
 
             <NavLink className="shell__icon-button" to={routePaths.chat} aria-label="Chat with support" title="Messages">
@@ -333,6 +356,16 @@ export const DashboardLayout = () => {
 
             <NavLink className="shell__icon-button" to={routePaths.services} aria-label="All services" title="All Services">
               <GridIcon />
+            </NavLink>
+
+            <NavLink className="shell__header-profile" to={routePaths.profile} title="View profile">
+              <span className="shell__header-avatar">
+                {initialsOf(user?.fullName || 'Sagarika')}
+              </span>
+              <span className="shell__header-name">
+                {user?.fullName ? user.fullName.split(' ')[0] : 'Sagarika'}
+              </span>
+              <ChevronDownIcon />
             </NavLink>
           </div>
         </header>
