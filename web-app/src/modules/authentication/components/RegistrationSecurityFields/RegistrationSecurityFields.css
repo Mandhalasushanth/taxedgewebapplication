@@ -1,0 +1,157 @@
+.reg-security-fields {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.3vw, 18px);
+}
+
+.reg-security-fields__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 1.3vw, 18px);
+}
+
+.reg-field__eye-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #64748b;
+  transition: color 0.15s ease;
+}
+
+.reg-field__eye-btn:hover {
+  color: #172033;
+}
+
+/* Row 8: Terms Checkbox */
+.reg-security-fields__terms {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 0.8vw, 14px);
+  margin-top: 4px;
+}
+
+.reg-security-fields__checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.reg-security-fields__checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.reg-security-fields__custom-checkbox {
+  width: clamp(18px, 1.1vw, 22px);
+  height: clamp(18px, 1.1vw, 22px);
+  border-radius: 4px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.reg-security-fields__checkbox-input:checked + .reg-security-fields__custom-checkbox {
+  background: #f97316;
+  border-color: #f97316;
+}
+
+.reg-security-fields__checkbox-input:focus + .reg-security-fields__custom-checkbox {
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+}
+
+.reg-security-fields__custom-checkbox svg {
+  width: 12px;
+  height: 12px;
+  stroke: #ffffff;
+  stroke-width: 3;
+  display: none;
+}
+
+.reg-security-fields__checkbox-input:checked + .reg-security-fields__custom-checkbox svg {
+  display: block;
+}
+
+.reg-security-fields__terms-text {
+  font-size: clamp(0.8125rem, 0.85vw, 0.9375rem);
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.reg-security-fields__terms-link {
+  color: #f97316;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.reg-security-fields__terms-link:hover {
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+/* Row 9: Continue Button */
+.reg-security-fields__btn {
+  width: 100%;
+  height: clamp(44px, 3.2vh, 50px);
+  border-radius: clamp(10px, 0.75vw, 12px);
+  font-size: clamp(0.9375rem, 1vw, 1.0625rem);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-top: clamp(4px, 0.8vh, 8px);
+  border: none;
+}
+
+/* Inactive / Waiting State: Grey / Off-white (clickable to show missing fields) */
+.reg-security-fields__btn:disabled,
+.reg-security-fields__btn--disabled,
+.reg-security-fields__btn--inactive {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #94a3b8;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.reg-security-fields__btn--inactive:hover {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+/* Enabled State: TaxEdge Orange */
+.reg-security-fields__btn--active {
+  background: #f97316;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25);
+}
+
+.reg-security-fields__btn--active:hover:not(:disabled) {
+  background: #ea580c;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+  transform: translateY(-1px);
+}
+
+.reg-security-fields__btn--active:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .reg-security-fields__row {
+    grid-template-columns: 1fr;
+  }
+}
+

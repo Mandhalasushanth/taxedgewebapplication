@@ -3,6 +3,19 @@ import { localStore } from '../storage/localStorage'
 
 import type { AuthTokens, AuthUser, RegisteredUserRecord } from './authTypes'
 
+const SCHEMA_VERSION = 'v2_fresh_auth'
+try {
+  if (localStore.get<string>('taxedge.auth_schema') !== SCHEMA_VERSION) {
+    localStore.remove(STORAGE_KEYS.registeredUsers)
+    localStore.remove(STORAGE_KEYS.accessToken)
+    localStore.remove(STORAGE_KEYS.refreshToken)
+    localStore.remove(STORAGE_KEYS.user)
+    localStore.set('taxedge.auth_schema', SCHEMA_VERSION)
+  }
+} catch {
+  /* Ignore browser storage errors */
+}
+
 /** The only place tokens and registered users are read from or written to persistent storage. */
 export const authStorage = {
   getTokens(): AuthTokens | null {
@@ -46,5 +59,15 @@ export const authStorage = {
     localStore.remove(STORAGE_KEYS.accessToken)
     localStore.remove(STORAGE_KEYS.refreshToken)
     localStore.remove(STORAGE_KEYS.user)
+  },
+  removeRegisteredUser(mobile: string): void {
+    const clean = mobile.replace(/\D/g, '')
+    const users = this.getRegisteredUsers()
+    delete users[clean]
+    localStore.set(STORAGE_KEYS.registeredUsers, users)
+  },
+  clearAll(): void {
+    this.clear()
+    localStore.remove(STORAGE_KEYS.registeredUsers)
   },
 }

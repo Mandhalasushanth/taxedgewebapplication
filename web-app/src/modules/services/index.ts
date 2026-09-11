@@ -1,6 +1,4 @@
 export { AllServicesPage } from './pages/AllServicesPage/AllServicesPage'
-export { AppSidebar } from './components/AppSidebar/AppSidebar'
-export { AppHeader } from './components/AppHeader/AppHeader'
 export { ServiceCard } from './components/ServiceCard/ServiceCard'
 export { ServiceTabs } from './components/ServiceTabs/ServiceTabs'
 export { ServiceSection } from './components/ServiceSection/ServiceSection'

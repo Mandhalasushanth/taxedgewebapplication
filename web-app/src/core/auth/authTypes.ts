@@ -53,6 +53,18 @@ export interface AuthUser {
   department?: string
   avatarUrl?: string
   isProfileComplete: boolean
+  // Profile and registration details
+  gender?: string
+  dob?: string
+  fatherSpouseName?: string
+  pan?: string
+  aadhaar?: string
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  pincode?: string
+  state?: string
+  customerType?: string
 }
 
 export interface AuthTokens {

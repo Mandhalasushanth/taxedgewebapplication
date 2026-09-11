@@ -2,9 +2,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { routePaths } from '@core/config';
 import { EmptyState, Loader } from '@shared/components';
 import { useGstMonthlyFilingDetail } from '../../hooks/useGstMonthlyFilingDetail';
-import { GSTDocuments } from '../../components/GSTDocuments/GSTDocuments';
-import { GSTTimelineTab } from '../../components/GSTTimelineTab/GSTTimelineTab';
-import { GSTPaymentsTab } from '../../components/GSTPaymentsTab/GSTPaymentsTab';
 import './GSTDetails.css';
 import { useState } from 'react';
 
@@ -142,15 +139,15 @@ export const GSTDetails = () => {
       )}
 
       {activeTab === 'documents' && (
-        <GSTDocuments documents={data.documents} />
+        <EmptyState title="Documents" description="Uploaded documents will be listed here." />
       )}
 
       {activeTab === 'timeline' && (
-        <GSTTimelineTab events={data.timeline} />
+        <EmptyState title="Timeline" description="Status updates and milestones will be shown here." />
       )}
 
       {activeTab === 'payments' && (
-        <GSTPaymentsTab payments={data.payments} />
+        <EmptyState title="Payments" description="Payment receipts and transaction history will appear here." />
       )}
     </div>
   );

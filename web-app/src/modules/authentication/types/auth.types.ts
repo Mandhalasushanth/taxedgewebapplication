@@ -5,13 +5,6 @@ export interface LoginPayload {
   password: string
 }
 
-export interface RegisterPayload {
-  fullName: string
-  email: string
-  mobile: string
-  password: string
-}
-
 export interface SendOtpPayload {
   mobile: string
 }
@@ -19,10 +12,6 @@ export interface SendOtpPayload {
 export interface VerifyOtpPayload {
   mobile: string
   otp: string
-}
-
-export interface PasscodePayload {
-  passcode: string
 }
 
 export interface VerifyPasscodePayload {
@@ -36,13 +25,4 @@ export interface SaveRegistrationStep1Payload {
   user: AuthUser
 }
 
-export interface CreateProfilePayload {
-  pan: string
-  addressLine: string
-  city: string
-  state: string
-  pincode: string
-}
-
 export type LoginResponse = AuthSession
-export type RegisterResponse = { user: AuthUser; otpSent: boolean }

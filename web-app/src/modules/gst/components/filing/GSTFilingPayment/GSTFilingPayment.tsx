@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { formatCurrency } from '@shared/utils'
-import type { PaymentResult } from '../../GSTStepPayment/GSTStepPayment'
+import type { PaymentResult } from '../../registration/GSTStepPayment/GSTStepPayment'
 import './GSTFilingPayment.css'
 
 interface GSTFilingPaymentProps {

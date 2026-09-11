@@ -2,8 +2,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { routePaths } from '@core/config'
 import { EmptyState, Loader } from '@shared/components'
 import { useGstMonthlyFilingDetail } from '../../hooks/useGstMonthlyFilingDetail'
-import { GSTTimelineTracker } from '../../components/GSTTimelineTracker/GSTTimelineTracker'
-import { GSTTrackSidebar } from '../../components/GSTTrackSidebar/GSTTrackSidebar'
 import './GSTTrack.css'
 
 export const GSTTrack = () => {
@@ -109,21 +107,40 @@ export const GSTTrack = () => {
       <div className="gst-track-page__grid">
         {/* Left Column: Timeline Tracker */}
         <main className="gst-track-page__main-col">
-          <GSTTimelineTracker events={data.timeline} />
+          <div className="gst-track-header-card" style={{ padding: '2rem' }}>
+            <EmptyState title="Application Timeline" description="Stage tracking details will be rendered here." />
+          </div>
         </main>
 
         {/* Right Column: Assigned Executive & Application Details */}
         <aside className="gst-track-page__sidebar-col">
-          <GSTTrackSidebar
-            assignee={data.tracking?.assignee}
-            openedDate={data.application.opened}
-            dueDate={data.application.due}
-            documentsCount={data.tracking?.documentsCount || '8 / 8'}
-            fee={data.tracking?.fee || '₹2,500'}
-            paymentStatus={data.tracking?.paymentStatus || 'Paid'}
-            onMessageExecutive={handleMessageExecutive}
-            onDownloadReceipt={handleDownloadReceipt}
-          />
+          <div className="gst-track-header-card" style={{ padding: '1.5rem', gap: '1rem' }}>
+            <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600, color: '#172033' }}>
+              Application Details
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem', color: '#64748b' }}>
+              <div>Reference: <strong style={{ color: '#172033' }}>{data.reference}</strong></div>
+              <div>Stage: <strong style={{ color: '#172033' }}>{data.application.currentStage}</strong></div>
+              <div>Opened: <strong style={{ color: '#172033' }}>{data.application.opened}</strong></div>
+              <div>Due: <strong style={{ color: '#172033' }}>{data.application.due}</strong></div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={handleMessageExecutive}
+                style={{ padding: '0.625rem 1rem', borderRadius: '8px', cursor: 'pointer', background: '#f97316', color: '#fff', border: 'none', fontWeight: 600 }}
+              >
+                Message Executive
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadReceipt}
+                style={{ padding: '0.625rem 1rem', borderRadius: '8px', cursor: 'pointer', background: '#f1f5f9', color: '#334155', border: '1px solid #cbd5e1', fontWeight: 500 }}
+              >
+                Download Receipt
+              </button>
+            </div>
+          </div>
         </aside>
       </div>
     </div>

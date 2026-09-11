@@ -1,5 +1,7 @@
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import type { ReactNode, MouseEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { routePaths } from '@core/config'
+import { useAuthStore } from '@store/index'
 import type { QuickService } from '../../types/dashboard.types'
 import './QuickServices.css'
 
@@ -48,11 +50,29 @@ const QUICK_SERVICE_ICONS: Record<string, ReactNode> = {
   ),
 }
 
-export const QuickServices = ({ services }: QuickServicesProps) => (
-  <section className="quick-services" id="quick-services">
-    <div className="quick-services__grid">
-      {services.map((service) => (
-        <Link className="quick-service" key={service.id} to={service.to}>
+export const QuickServices = ({ services }: QuickServicesProps) => {
+  const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+
+  const handleServiceClick = (e: MouseEvent, targetUrl: string) => {
+    e.preventDefault()
+    if (!user?.isProfileComplete) {
+      navigate(routePaths.auth.createProfile, { state: { returnTo: targetUrl } })
+    } else {
+      navigate(targetUrl)
+    }
+  }
+
+  return (
+    <section className="quick-services" id="quick-services">
+      <div className="quick-services__grid">
+        {services.map((service) => (
+          <a
+            className="quick-service"
+            key={service.id}
+            href={service.to}
+            onClick={(e) => handleServiceClick(e, service.to)}
+          >
           <div className="quick-service__icon-wrap">
             <span className="quick-service__icon" aria-hidden="true">
               {QUICK_SERVICE_ICONS[service.id] ? (
@@ -88,9 +108,10 @@ export const QuickServices = ({ services }: QuickServicesProps) => (
               Open <span aria-hidden="true">→</span>
             </span>
           </div>
-        </Link>
+        </a>
       ))}
     </div>
   </section>
-)
+  )
+}
 

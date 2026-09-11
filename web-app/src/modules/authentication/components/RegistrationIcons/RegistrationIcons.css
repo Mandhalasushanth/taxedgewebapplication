@@ -1,0 +1,13 @@
+.reg-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #f97316;
+}
+
+.reg-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}

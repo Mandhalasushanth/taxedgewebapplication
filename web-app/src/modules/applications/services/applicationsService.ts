@@ -1,25 +1,22 @@
 import { env } from '@core/config'
+import { userStorage } from '@core/storage/userStorage'
 
 import { applicationsApi } from '../api/applicationsApi'
 import type { ApplicationsFilters, ApplicationsItem } from '../types/applications.types'
 
-/* Development mock - delete once the API is live. */
-const mockItems: ApplicationsItem[] = [
-  {
-    id: 'applications_001',
-    reference: 'TE-Applications-0001',
-    title: 'Sample application',
-    status: 'MANAGER_REVIEW',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-]
-
 export const applicationsService = {
   async list(filters?: ApplicationsFilters): Promise<ApplicationsItem[]> {
     if (env.enableMocks) {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      return mockItems
+      await new Promise((resolve) => setTimeout(resolve, 200))
+      const userApps = userStorage.getUserApplications()
+      return userApps.map((a) => ({
+        id: a.id,
+        reference: a.code,
+        title: a.title,
+        status: (a.statusLabel.toUpperCase().replace(/\s+/g, '_') as any) || 'SUBMITTED',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }))
     }
     const response = await applicationsApi.list(filters)
     return response.data

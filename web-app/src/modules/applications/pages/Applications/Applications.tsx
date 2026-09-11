@@ -19,20 +19,27 @@ export const Applications = () => {
       {error && <EmptyState title="Could not load Applications" description={error} />}
 
       {!isLoading && !error && (
-        <Card title="Applications" subtitle="Wire this module up to the real API in services/applicationsService.ts">
-          <ul className="applications-page__list">
-            {(data ?? []).map((item) => (
-              <li className="applications-page__row" key={item.id}>
-                <div>
-                  <p className="applications-page__row-title">{item.title}</p>
-                  <p className="applications-page__row-meta">
-                    {item.reference} · {formatDate(item.updatedAt)}
-                  </p>
-                </div>
-                <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
-              </li>
-            ))}
-          </ul>
+        <Card title="Applications" subtitle="Every request you have raised, across modules.">
+          {(data ?? []).length === 0 ? (
+            <EmptyState
+              title="No Applications Found"
+              description="You have not submitted any service applications yet."
+            />
+          ) : (
+            <ul className="applications-page__list">
+              {(data ?? []).map((item) => (
+                <li className="applications-page__row" key={item.id}>
+                  <div>
+                    <p className="applications-page__row-title">{item.title}</p>
+                    <p className="applications-page__row-meta">
+                      {item.reference} · {formatDate(item.updatedAt)}
+                    </p>
+                  </div>
+                  <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
     </div>

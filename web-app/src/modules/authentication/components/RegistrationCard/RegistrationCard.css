@@ -1,0 +1,45 @@
+.reg-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  width: 100%;
+  max-width: clamp(580px, 46vw, 840px);
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.reg-card__accent-line {
+  display: none;
+}
+
+.reg-card__header {
+  margin-bottom: clamp(16px, 1.8vh, 24px);
+}
+
+.reg-card__title {
+  margin: 0 0 6px 0;
+  font-size: clamp(1.5rem, 1.75vw, 2rem);
+  font-weight: 700;
+  color: #172033;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.reg-card__subtitle {
+  margin: 0;
+  font-size: clamp(0.84375rem, 0.9vw, 1rem);
+  color: #64748b;
+  font-weight: 400;
+}
+
+@media (max-width: 640px) {
+  .reg-card {
+    padding: 0;
+  }
+
+  .reg-card__title {
+    font-size: 1.35rem;
+  }
+}

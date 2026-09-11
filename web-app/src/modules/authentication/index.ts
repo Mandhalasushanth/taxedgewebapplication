@@ -6,8 +6,6 @@ export { authenticationRoutes } from './routes'
 export { useAuth } from './hooks/useAuth'
 export { authFlowService } from './services/authFlowService'
 export type {
-  CreateProfilePayload,
   LoginPayload,
-  RegisterPayload,
   VerifyOtpPayload,
 } from './types/auth.types'

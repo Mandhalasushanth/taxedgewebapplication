@@ -18,5 +18,24 @@ export const CustomerRoute = () => {
 
   if (isStaffRole(user.role)) return <Navigate to={routePaths.staff.dashboard} replace />
 
+  // Incomplete registration redirect for services
+  const isDashboardOrProfile =
+    location.pathname === routePaths.dashboard ||
+    location.pathname === routePaths.auth.register ||
+    location.pathname === routePaths.registration ||
+    location.pathname === routePaths.auth.createProfile ||
+    location.pathname === routePaths.customerType ||
+    location.pathname === routePaths.profile
+
+  if (!user.isProfileComplete && !isDashboardOrProfile) {
+    return (
+      <Navigate
+        to={routePaths.auth.register}
+        state={{ returnTo: location.pathname }}
+        replace
+      />
+    )
+  }
+
   return <Outlet />
 }

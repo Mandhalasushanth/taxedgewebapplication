@@ -19,20 +19,27 @@ export const Insurance = () => {
       {error && <EmptyState title="Could not load Insurance" description={error} />}
 
       {!isLoading && !error && (
-        <Card title="Insurance" subtitle="Wire this module up to the real API in services/insuranceService.ts">
-          <ul className="insurance-page__list">
-            {(data ?? []).map((item) => (
-              <li className="insurance-page__row" key={item.id}>
-                <div>
-                  <p className="insurance-page__row-title">{item.title}</p>
-                  <p className="insurance-page__row-meta">
-                    {item.reference} · {formatDate(item.updatedAt)}
-                  </p>
-                </div>
-                <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
-              </li>
-            ))}
-          </ul>
+        <Card title="Insurance" subtitle="Policies, renewals and claims.">
+          {(data ?? []).length === 0 ? (
+            <EmptyState
+              title="No Insurance Policies"
+              description="Insurance policy and claims services will be available here soon."
+            />
+          ) : (
+            <ul className="insurance-page__list">
+              {(data ?? []).map((item) => (
+                <li className="insurance-page__row" key={item.id}>
+                  <div>
+                    <p className="insurance-page__row-title">{item.title}</p>
+                    <p className="insurance-page__row-meta">
+                      {item.reference} · {formatDate(item.updatedAt)}
+                    </p>
+                  </div>
+                  <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
     </div>

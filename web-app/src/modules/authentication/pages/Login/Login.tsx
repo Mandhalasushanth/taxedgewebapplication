@@ -1,52 +1,82 @@
-import { AuthBrandLogo } from '../../components/AuthBrandLogo/AuthBrandLogo'
-import { AuthMetricCards } from '../../components/AuthMetricCards/AuthMetricCards'
-import { AuthPedestal } from '../../components/AuthPedestal/AuthPedestal'
-import { AuthTrustBadges } from '../../components/AuthTrustBadges/AuthTrustBadges'
+import React from 'react'
 import { SignInCard } from '../../components/SignInCard/SignInCard'
 import './Login.css'
 
-export const Login = () => {
+const FEATURE_BADGES = [
+  { icon: '/assets/images/badge-secure.png', alt: 'Secure', title: 'Secure & Reliable', desc: 'Your data is always protected' },
+  { icon: '/assets/images/badge-fast.png', alt: 'Fast', title: 'Fast & Easy', desc: 'Complete your tasks in minutes' },
+  { icon: '/assets/images/badge-support.png', alt: 'Support', title: 'Expert Support', desc: 'Dedicated tax professionals' },
+]
+
+export const Login: React.FC = () => {
   return (
     <div className="login-screen">
-      {/* Left Stage */}
-      <section className="login-screen__left">
-        <div className="login-screen__brand">
-          <AuthBrandLogo />
-        </div>
+      <div className="login-bg" />
+      <div className="login-left-overlay" />
 
-        <div className="login-screen__hero-text">
-          <h1 className="login-screen__headline">
-            Welcome back to <span className="login-screen__headline-orange">TaxEdge</span>
+      {/* Top Bar */}
+      <div className="login-top-brand">
+        <img src="/assets/images/taxedge-brand-icon.png" alt="TaxEdge" className="top-brand-icon" />
+        <div className="top-brand-text">
+          <div className="top-brand-name">
+            <span className="brand-white">Tax</span>
+            <span className="brand-orange">Edge</span>
+          </div>
+          <span className="top-brand-sub">FIN SOLUTIONS</span>
+        </div>
+      </div>
+
+      <div className="login-top-tagline">
+        <span className="tagline-text">SIMPLE • SECURE • COMPLIANT</span>
+        <div className="tagline-bar" />
+      </div>
+
+      {/* Left Hero Section */}
+      <section className="login-hero">
+        <div className="hero-header">
+          <h1 className="hero-title">
+            <span className="hero-title-main">Simplifying Taxes for a</span>
+            <span className="hero-title-orange">Brighter Tomorrow</span>
           </h1>
-          <p className="login-screen__subtext">
-            <span>Sign in to track your applications, upload documents and</span>
-            <span>talk to your executive.</span>
+          <p className="hero-subtitle">
+            Your trusted partner for <span className="subtitle-highlight">GST compliance</span>, filings<br />
+            and <span className="subtitle-highlight">business growth</span> — all in one place.
           </p>
         </div>
 
-        {/* 3D Pedestal with Phone, Tax sheet & Shield */}
-        <div className="login-screen__visual-box">
-          <AuthPedestal variant="signIn" />
+        <div className="hero-badges">
+          {FEATURE_BADGES.map((b) => (
+            <div className="feature-badge" key={b.title}>
+              <div className="badge-icon-box">
+                <img src={b.icon} alt={b.alt} className="badge-icon-img" />
+              </div>
+              <div className="badge-text">
+                <span className="badge-title">{b.title}</span>
+                <span className="badge-desc">{b.desc}</span>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* 3 Stat Counter Cards */}
-        <AuthMetricCards />
-
-        {/* Bottom Trust Badges */}
-        <AuthTrustBadges />
+        <div className="hero-bottom-tag">
+          <div className="bottom-tag-bar" />
+          <span className="bottom-tag-text">COMPLY • GROW • SUCCEED</span>
+        </div>
       </section>
 
-      {/* Center Dividing Vertical Line with Glowing Orange Ring Node */}
-      <div className="login-screen__center-divider" aria-hidden="true">
-        <div className="login-screen__divider-line" />
-        <div className="login-screen__divider-node" />
+      {/* Middle Illustration */}
+      <div className="login-illustration-wrap">
+        <div className="illus-glow" />
+        <img
+          src="/assets/images/tax-journey-illustration.png"
+          alt="GST Tax Journey Illustration"
+          className="illus-img"
+        />
       </div>
 
-      {/* Right Stage: White Card */}
-      <aside className="login-screen__right">
-        <div className="login-screen__card-box">
-          <SignInCard />
-        </div>
+      {/* Right Sign-in Card */}
+      <aside className="login-card-slot">
+        <SignInCard />
       </aside>
     </div>
   )

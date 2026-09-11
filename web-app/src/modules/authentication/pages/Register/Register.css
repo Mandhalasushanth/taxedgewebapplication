@@ -1,7 +1,7 @@
 .register-screen {
   position: relative;
   display: grid;
-  grid-template-columns: 1.15fr 0.95fr;
+  grid-template-columns: 45% 55%;
   width: 100vw;
   height: 100vh;
   max-height: 100vh;
@@ -12,16 +12,18 @@
 }
 
 .register-screen__left {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 100vh;
   max-height: 100vh;
   width: 100%;
-  max-width: 720px;
+  min-width: 0;
   box-sizing: border-box;
-  padding: 2.5rem 3.5rem;
-  margin: 0 auto;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  background: #030a17;
 }
 
 .register-screen__brand { margin-bottom: 0; }
@@ -84,7 +86,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 54.7%;
+  left: 45%;
   transform: translateX(-50%);
   pointer-events: none;
   display: flex;
@@ -111,29 +113,52 @@
   min-height: 100vh;
   max-height: 100vh;
   width: 100%;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 4.5rem;
+  padding: clamp(1.5rem, 3.5vw, 4rem);
   box-sizing: border-box;
   box-shadow: -15px 0 45px rgba(0, 0, 0, 0.35);
   overflow-y: auto;
 }
-.register-screen__card-box { width: 100%; max-width: 480px; box-sizing: border-box; }
+.register-screen__card-box { width: 100%; max-width: clamp(580px, 46vw, 840px); box-sizing: border-box; margin: auto; }
 
-@media (max-width: 1080px) {
-  .register-screen { grid-template-columns: 1fr; height: auto; min-height: 100vh; max-height: none; overflow-y: auto; }
-  .register-screen__left { height: auto; min-height: auto; max-height: none; padding: 2.5rem 2rem 2rem; gap: 1.75rem; }
-  .register-screen__headline { font-size: 2.25rem; }
-  .register-screen__visual-row { flex-direction: column; gap: 1.5rem; }
-  .register-screen__right { height: auto; min-height: auto; max-height: none; padding: 3.5rem 2rem; border-top-left-radius: 32px; border-top-right-radius: 32px; }
-  .register-screen__center-divider { display: none; }
+/* Tablet / Small Laptop Layout (768px - 1024px): Keep both panels */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .register-screen__right {
+    padding: 1.5rem 1rem;
+  }
+  .register-screen__card-box {
+    max-width: 100%;
+  }
 }
 
-@media (max-width: 640px) {
-  .register-screen__left { padding: 1.75rem 1.25rem; gap: 1.5rem; }
-  .register-screen__headline { font-size: 1.875rem; }
-  .register-screen__subtext { font-size: 0.875rem; }
-  .register-screen__right { padding: 2.5rem 1.25rem 3rem; border-top-left-radius: 24px; border-top-right-radius: 24px; }
-  .register-screen__service-pill { font-size: 0.75rem; padding: 0.35rem 0.75rem; }
+/* Mobile Screen Only (<= 767px): Hide hero section, show only registration form */
+@media (max-width: 767px) {
+  .register-screen {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    max-height: none;
+    overflow-y: auto;
+  }
+  .register-screen__left {
+    display: none;
+  }
+  .register-screen__center-divider {
+    display: none;
+  }
+  .register-screen__right {
+    height: auto;
+    min-height: 100vh;
+    max-height: none;
+    width: 100%;
+    padding: 1.5rem 1rem 2.5rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .register-screen__card-box {
+    max-width: 100%;
+  }
 }

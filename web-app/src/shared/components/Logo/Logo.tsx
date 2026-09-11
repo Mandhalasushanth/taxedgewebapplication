@@ -38,8 +38,8 @@ export const Logo = ({
     {showText && (
       <div className="taxedge-logo__text-group">
         <span className="taxedge-logo__title">
-          <span className="taxedge-logo__brand-tax">TAX</span>
-          <span className="taxedge-logo__brand-edge">EDGE</span>
+          <span className="taxedge-logo__brand-tax">Tax</span>
+          <span className="taxedge-logo__brand-edge">Edge</span>
         </span>
         {subtitle && <span className="taxedge-logo__subtitle">{subtitle}</span>}
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { authService } from '@core/auth'
 import { routePaths } from '@core/config'
 import { useAuthStore } from '@store/index'
@@ -15,6 +15,8 @@ import './CustomerTypePage.css'
 
 export const CustomerTypePage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const locationState = location.state as { returnTo?: string } | null
   const { selectedId, setSelectedId } = useCustomerType(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const user = useAuthStore((state) => state.user)
@@ -33,12 +35,13 @@ export const CustomerTypePage = () => {
       const userMobile = currentUser?.mobile || ''
 
       if (userMobile) {
-        await authFlowService.completeRegistration(userMobile)
+        await authFlowService.completeRegistration(userMobile, selectedId)
       }
 
       if (currentUser) {
         const completedUser = {
           ...currentUser,
+          customerType: selectedId,
           isProfileComplete: true,
         }
         setUser(completedUser)
@@ -51,8 +54,9 @@ export const CustomerTypePage = () => {
         })
       }
 
-      // Complete registration and enter dashboard
-      navigate(routePaths.dashboard, { replace: true })
+      // Complete registration and enter requested service or dashboard
+      const destination = locationState?.returnTo || routePaths.dashboard
+      navigate(destination, { replace: true })
     } finally {
       setIsSubmitting(false)
     }

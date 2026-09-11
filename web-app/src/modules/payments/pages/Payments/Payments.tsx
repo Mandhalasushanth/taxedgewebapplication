@@ -19,20 +19,27 @@ export const Payments = () => {
       {error && <EmptyState title="Could not load Payments" description={error} />}
 
       {!isLoading && !error && (
-        <Card title="Payments" subtitle="Wire this module up to the real API in services/paymentsService.ts">
-          <ul className="payments-page__list">
-            {(data ?? []).map((item) => (
-              <li className="payments-page__row" key={item.id}>
-                <div>
-                  <p className="payments-page__row-title">{item.title}</p>
-                  <p className="payments-page__row-meta">
-                    {item.reference} · {formatDate(item.updatedAt)}
-                  </p>
-                </div>
-                <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
-              </li>
-            ))}
-          </ul>
+        <Card title="Payments" subtitle="Invoices and receipts for TaxEdge services.">
+          {(data ?? []).length === 0 ? (
+            <EmptyState
+              title="No Payment Records"
+              description="You have no payment history or pending invoices at this time."
+            />
+          ) : (
+            <ul className="payments-page__list">
+              {(data ?? []).map((item) => (
+                <li className="payments-page__row" key={item.id}>
+                  <div>
+                    <p className="payments-page__row-title">{item.title}</p>
+                    <p className="payments-page__row-meta">
+                      {item.reference} · {formatDate(item.updatedAt)}
+                    </p>
+                  </div>
+                  <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
     </div>

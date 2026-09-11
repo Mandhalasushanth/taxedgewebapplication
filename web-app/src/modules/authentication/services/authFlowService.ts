@@ -4,9 +4,7 @@ import type { AuthSession, AuthUser, UserRole } from '@core/auth'
 
 import { authApi } from '../api/authApi'
 import type {
-  CreateProfilePayload,
   LoginPayload,
-  RegisterPayload,
   SaveRegistrationStep1Payload,
   VerifyOtpPayload,
   VerifyPasscodePayload,
@@ -134,20 +132,26 @@ export const authFlowService = {
 
   async saveRegistrationStep1(payload: SaveRegistrationStep1Payload): Promise<void> {
     const clean = payload.mobile.replace(/\D/g, '')
+    const completedUser: AuthUser = {
+      ...payload.user,
+      isProfileComplete: true,
+    }
     authStorage.saveRegisteredUser({
       mobile: clean,
       passcode: payload.passcode,
-      isRegistered: false,
-      user: payload.user,
+      isRegistered: true,
+      user: completedUser,
     })
+    authStorage.setUser(completedUser)
   },
 
-  async completeRegistration(mobile: string): Promise<void> {
+  async completeRegistration(mobile: string, customerType?: string): Promise<void> {
     const clean = mobile.replace(/\D/g, '')
     const record = authStorage.getRegisteredUser(clean)
     if (record) {
       const updatedUser: AuthUser = {
         ...record.user,
+        customerType: customerType || record.user.customerType,
         isProfileComplete: true,
       }
       authStorage.saveRegisteredUser({
@@ -159,7 +163,11 @@ export const authFlowService = {
     } else {
       const currentUser = authStorage.getUser()
       if (currentUser) {
-        const completedUser = { ...currentUser, isProfileComplete: true }
+        const completedUser = {
+          ...currentUser,
+          customerType: customerType || currentUser.customerType,
+          isProfileComplete: true,
+        }
         authStorage.saveRegisteredUser({
           mobile: clean,
           passcode: '123456',
@@ -169,31 +177,6 @@ export const authFlowService = {
         authStorage.setUser(completedUser)
       }
     }
-  },
-
-  async register(payload: RegisterPayload): Promise<{ mobile: string }> {
-    if (env.enableMocks) {
-      await delay()
-      const user: AuthUser = {
-        id: `usr_${Date.now().toString(36)}`,
-        fullName: payload.fullName,
-        email: payload.email,
-        mobile: payload.mobile,
-        role: 'CUSTOMER',
-        permissions: [],
-        isProfileComplete: false,
-      }
-      authStorage.saveRegisteredUser({
-        mobile: payload.mobile,
-        passcode: payload.password,
-        isRegistered: false,
-        user,
-      })
-      authStorage.setUser(user)
-      return { mobile: payload.mobile }
-    }
-    await authApi.register(payload)
-    return { mobile: payload.mobile }
   },
 
   async sendOtp(mobile: string): Promise<void> {
@@ -208,28 +191,9 @@ export const authFlowService = {
     if (env.enableMocks) {
       await delay()
       if (payload.otp !== '123456') throw new Error('That code is incorrect. Try 123456 in demo mode.')
-      const session = mockSession(payload.mobile)
-      authStorage.setTokens(session.tokens)
-      authStorage.setUser(session.user)
-      return session
+      return mockSession(payload.mobile)
     }
     return authApi.verifyOtp(payload)
-  },
-
-  async setPasscode(passcode: string): Promise<void> {
-    if (env.enableMocks) {
-      await delay(300)
-      return
-    }
-    await authApi.setPasscode({ passcode })
-  },
-
-  async createProfile(payload: CreateProfilePayload): Promise<AuthUser> {
-    if (env.enableMocks) {
-      await delay()
-      return { ...mockUser('9999999999'), isProfileComplete: true }
-    }
-    return authApi.createProfile(payload)
   },
 
   async logout(): Promise<void> {

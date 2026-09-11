@@ -13,7 +13,7 @@ export const BrandPanel: FC = () => {
       {/* Top Brand Header */}
       <div className="brand-panel__header">
         <div className="brand-panel__logo-tile">
-          <img src="/logo-dark.png" alt="TaxEdge" className="brand-panel__logo-img" />
+          <img src="/assets/images/taxedge-brand-icon.png" alt="TaxEdge" className="brand-panel__logo-img" />
         </div>
         <div className="brand-panel__brand-text">
           <span className="brand-panel__brand-title">

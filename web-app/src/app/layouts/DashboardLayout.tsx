@@ -97,7 +97,7 @@ export const DashboardLayout = () => {
             onClick={() => setIsMobileNavOpen(false)}
           >
             <div className="shell__brand-logo-box">
-              <img src="/logo-dark.png" alt="TaxEdge" className="shell__brand-logo-img" />
+              <img src="/assets/images/taxedge-brand-icon.png" alt="TaxEdge" className="shell__brand-logo-img" />
             </div>
             <div className="shell__brand-text">
               <span className="shell__brand-name">TAX<span className="shell__brand-name-accent">EDGE</span></span>

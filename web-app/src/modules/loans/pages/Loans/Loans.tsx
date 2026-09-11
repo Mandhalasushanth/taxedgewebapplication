@@ -19,20 +19,27 @@ export const Loans = () => {
       {error && <EmptyState title="Could not load Loans" description={error} />}
 
       {!isLoading && !error && (
-        <Card title="Loans" subtitle="Wire this module up to the real API in services/loansService.ts">
-          <ul className="loans-page__list">
-            {(data ?? []).map((item) => (
-              <li className="loans-page__row" key={item.id}>
-                <div>
-                  <p className="loans-page__row-title">{item.title}</p>
-                  <p className="loans-page__row-meta">
-                    {item.reference} · {formatDate(item.updatedAt)}
-                  </p>
-                </div>
-                <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
-              </li>
-            ))}
-          </ul>
+        <Card title="Loans" subtitle="Applications and offers across lenders.">
+          {(data ?? []).length === 0 ? (
+            <EmptyState
+              title="No Loan Applications"
+              description="Loan application and financing services will be available here soon."
+            />
+          ) : (
+            <ul className="loans-page__list">
+              {(data ?? []).map((item) => (
+                <li className="loans-page__row" key={item.id}>
+                  <div>
+                    <p className="loans-page__row-title">{item.title}</p>
+                    <p className="loans-page__row-meta">
+                      {item.reference} · {formatDate(item.updatedAt)}
+                    </p>
+                  </div>
+                  <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
     </div>

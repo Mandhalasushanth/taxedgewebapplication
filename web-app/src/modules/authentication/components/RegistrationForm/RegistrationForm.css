@@ -1,0 +1,19 @@
+.reg-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.3vw, 18px);
+  width: 100%;
+}
+
+.reg-form__alert-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  color: #dc2626;
+}
+

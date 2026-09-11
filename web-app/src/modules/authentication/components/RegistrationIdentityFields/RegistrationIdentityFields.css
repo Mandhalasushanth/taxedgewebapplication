@@ -1,0 +1,17 @@
+.reg-identity-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reg-identity-fields__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .reg-identity-fields__row {
+    grid-template-columns: 1fr;
+  }
+}

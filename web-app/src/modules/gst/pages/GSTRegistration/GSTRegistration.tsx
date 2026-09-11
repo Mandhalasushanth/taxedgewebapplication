@@ -1,69 +1,74 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
-import { useAppStore } from '@store/index'
+import { useAppStore, useAuthStore } from '@store/index'
+import { userStorage } from '@core/storage/userStorage'
 
+import { GSTOrderSummary } from '../../components'
 import {
   GSTRegistrationStepper,
-  GSTOrderSummary,
   GSTStepBusiness,
   GSTStepAddressBank,
   GSTStepDocuments,
   GSTStepReview,
   GSTStepPayment,
   GSTPaymentSuccess,
-} from '../../components'
-import type { BusinessFormData } from '../../components/GSTStepBusiness/GSTStepBusiness'
-import type { AddressBankFormData } from '../../components/GSTStepAddressBank/GSTStepAddressBank'
-import type { PaymentResult } from '../../components/GSTStepPayment/GSTStepPayment'
+  type BusinessFormData,
+  type AddressBankFormData,
+  type PaymentResult,
+} from '../../components/registration'
 import './GSTRegistration.css'
-
-const INITIAL_BUSINESS_DATA: BusinessFormData = {
-  legalName: 'Shree Deshmukh Traders',
-  tradeName: 'Deshmukh Traders',
-  pan: 'AXTPD4419K',
-  aadhaar: '8910 2345 6789',
-  mobile: '+91 98670 41255',
-  email: 'anjali@shreedeshmukh.in',
-  constitution: 'Proprietorship',
-  natureOfBusiness: 'Trading',
-  principalActivity:
-    'Wholesale and retail trading of packaged food products and household consumables.',
-  turnover: '₹40 lakh – ₹1 crore',
-  compositionScheme: 'No — regular scheme',
-}
-
-const INITIAL_ADDRESS_BANK_DATA: AddressBankFormData = {
-  address: 'Shop 14, Laxmi Complex, FC Road, Shivajinagar',
-  city: 'Pune',
-  pinCode: '411004',
-  state: 'Maharashtra',
-  possessionNature: 'Rented',
-  accountHolderName: 'Shree Deshmukh Traders',
-  accountNumber: '918273645012',
-  ifscCode: 'HDFC0000412',
-  accountType: 'Current',
-  additionalPlaces: [],
-}
-
-const DEFAULT_PAYMENT_RESULT: PaymentResult = {
-  transactionId: 'TXN2609021184402',
-  receiptNumber: 'TE/26-27/R-0912',
-  method: 'UPI · anjali@okhdfcbank',
-  dateText: '2 Sep 2026, 10:42 AM',
-  applicationRef: 'GST-2026-00118',
-  amount: 5900,
-}
 
 export const GSTRegistration = () => {
   const navigate = useNavigate()
   const pushToast = useAppStore((state) => state.pushToast)
+  const user = useAuthStore((state) => state.user)
 
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [businessData, setBusinessData] = useState<BusinessFormData>(INITIAL_BUSINESS_DATA)
-  const [addressBankData, setAddressBankData] =
-    useState<AddressBankFormData>(INITIAL_ADDRESS_BANK_DATA)
-  const [paymentResult, setPaymentResult] = useState<PaymentResult>(DEFAULT_PAYMENT_RESULT)
+  const [businessData, setBusinessData] = useState<BusinessFormData>(() => ({
+    legalName: user?.fullName || '',
+    tradeName: '',
+    pan: user?.pan || '',
+    aadhaar: user?.aadhaar || '',
+    mobile: user?.mobile || '',
+    email: user?.email || '',
+    constitution: '',
+    natureOfBusiness: '',
+    principalActivity: '',
+    turnover: '',
+    compositionScheme: '',
+  }))
+
+  const [addressBankData, setAddressBankData] = useState<AddressBankFormData>(() => {
+    const fullAddress = [user?.addressLine1, user?.addressLine2].filter(Boolean).join(', ')
+    return {
+      address: fullAddress,
+      city: user?.city || '',
+      pinCode: user?.pincode || '',
+      state: user?.state || '',
+      possessionNature: '',
+      accountHolderName: user?.fullName || '',
+      accountNumber: '',
+      ifscCode: '',
+      accountType: '',
+      additionalPlaces: [],
+    }
+  })
+
+  const [paymentResult, setPaymentResult] = useState<PaymentResult>(() => ({
+    transactionId: `TXN${Date.now()}`,
+    receiptNumber: `TE/${new Date().getFullYear()}/R-${Math.floor(Math.random() * 9000 + 1000)}`,
+    method: 'UPI',
+    dateText: new Intl.DateTimeFormat('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    }).format(new Date()),
+    applicationRef: `GST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 90000 + 10000))}`,
+    amount: 5900,
+  }))
 
   const handleBusinessChange = (field: keyof BusinessFormData, value: string) => {
     setBusinessData((prev) => ({ ...prev, [field]: value }))
@@ -125,6 +130,19 @@ export const GSTRegistration = () => {
     setCurrentStep(6)
     pushToast('Payment of ₹5,900 successful', 'success')
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    // Keep and persist user application
+    userStorage.saveUserApplication({
+      id: `app-gst-${Date.now()}`,
+      code: result.applicationRef || `GST-${new Date().getFullYear()}-0001`,
+      title: 'GST Registration',
+      meta: `${businessData.tradeName || businessData.legalName || 'New Registration'} · ${addressBankData.state || 'India'}`,
+      statusLabel: 'Submitted',
+      statusTone: 'info',
+      progress: 25,
+      icon: '📄',
+      to: routePaths.gst.root,
+    })
   }
 
   const getStepBreadcrumb = () => {

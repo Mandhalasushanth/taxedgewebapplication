@@ -18,7 +18,7 @@ import { insuranceRoutes } from '@modules/insurance'
 import { itrRoutes } from '@modules/itr'
 import { loansRoutes } from '@modules/loans'
 import { paymentsRoutes } from '@modules/payments'
-import { profileRoutes, CreateProfilePage } from '@modules/profile'
+import { profileRoutes } from '@modules/profile'
 import { servicesRoutes } from '@modules/services'
 import { staffRoutes } from '@modules/staff'
 import { supportRoutes } from '@modules/support'
@@ -44,11 +44,11 @@ export const routeConfig: RouteObject[] = [
   },
   {
     path: routePaths.registration,
-    element: <Navigate to={routePaths.auth.createProfile} replace />,
+    element: <Navigate to={routePaths.auth.register} replace />,
   },
   {
     path: routePaths.auth.createProfile,
-    element: <CreateProfilePage />,
+    element: <Navigate to={routePaths.auth.register} replace />,
   },
   {
     path: routePaths.customerType,

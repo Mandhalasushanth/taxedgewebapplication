@@ -1,7 +1,7 @@
-import { Card, EmptyState, Loader } from '@shared/components'
+import { Badge, Card, EmptyState, Loader } from '@shared/components'
+import { STATUS_LABELS, STATUS_TONES } from '@shared/constants'
 import { formatCurrency, formatDate } from '@shared/utils'
 
-import { GSTStatus } from '../../components/GSTStatus/GSTStatus'
 import { useGstReturns } from '../../hooks/useGstReturns'
 import './GSTReturn.css'
 
@@ -43,7 +43,7 @@ export const GSTReturn = () => {
                   <td>{formatDate(item.dueOn)}</td>
                   <td>{formatCurrency(item.taxPayable)}</td>
                   <td>
-                    <GSTStatus status={item.status} />
+                    <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
                   </td>
                 </tr>
               ))}

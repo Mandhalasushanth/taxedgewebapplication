@@ -1,51 +1,55 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { routePaths } from '@core/config'
+import { authStorage } from '@core/auth'
+import { useAuthStore } from '@store/index'
+import { validateMobileNumber } from '@shared/utils'
 import { authFlowService } from '../../services/authFlowService'
 import { COUNTRY_CODES } from '../../constants/authData.constants'
+import { MobileEntryView } from './MobileEntryView'
+import { OtpVerificationView } from './OtpVerificationView'
+import { PasscodeLoginView } from './PasscodeLoginView'
 import './SignInCard.css'
+
+export type AuthMode = 'mobile' | 'otp' | 'passcode'
 
 export interface SignInCardProps {
   initialMobile?: string
+  initialMode?: AuthMode
 }
 
-export const SignInCard = ({ initialMobile = '' }: SignInCardProps) => {
+export const SignInCard: React.FC<SignInCardProps> = ({
+  initialMobile = '',
+  initialMode = 'mobile',
+}) => {
   const navigate = useNavigate()
-  const location = useLocation()
-  const locationState = location.state as { forceOtp?: boolean } | null
+  const setUser = useAuthStore((state) => state.setUser)
+  const signOut = useAuthStore((state) => state.signOut)
+
+  const [authMode, setAuthMode] = useState<AuthMode>(initialMode)
   const [mobile, setMobile] = useState(initialMobile)
   const [countryIndex, setCountryIndex] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const selectedCountry = COUNTRY_CODES[countryIndex] ?? COUNTRY_CODES[0]
+  const cleanMobile = mobile.replace(/\D/g, '').trim()
 
-  const handleMobileChange = (value: string) => {
-    // Keep only digits and max 10
-    const numeric = value.replace(/\D/g, '').slice(0, 10)
-    setMobile(numeric)
-    if (error) setError(null)
-  }
-
-  const toggleCountry = () => {
+  const handleToggleCountry = () => {
     setCountryIndex((prev) => (prev + 1) % COUNTRY_CODES.length)
   }
 
-  const handleSendOtp = async (e?: FormEvent) => {
-    if (e) {
-      e.preventDefault()
-    }
+  const handleMobileChange = (val: string) => {
+    const cleaned = val.replace(/\D/g, '').slice(0, 10)
+    setMobile(cleaned)
+    if (error) setError(null)
+  }
 
-    const cleanMobile = mobile.replace(/\D/g, '').trim()
-    
-    // Strict validation
-    if (!cleanMobile) {
-      setError('Please enter your 10-digit mobile number')
-      return
-    }
-    if (cleanMobile.length < 10) {
-      setError('Please enter a valid 10-digit mobile number')
+  const handleMobileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const mobileError = validateMobileNumber(cleanMobile)
+    if (mobileError) {
+      setError(mobileError)
       return
     }
 
@@ -53,33 +57,8 @@ export const SignInCard = ({ initialMobile = '' }: SignInCardProps) => {
     setIsSubmitting(true)
 
     try {
-      const isAlreadyRegistered = authFlowService.isRegistered(cleanMobile)
-
-      if (isAlreadyRegistered && !locationState?.forceOtp) {
-        // Returning user: skip OTP verification, navigate directly to passcode entry
-        navigate(routePaths.auth.passcode, {
-          state: {
-            mobile: cleanMobile,
-            countryCode: selectedCountry.code,
-          },
-        })
-        return
-      }
-
-      // Trigger OTP verification
-      try {
-        await authFlowService.sendOtp(cleanMobile)
-      } catch (err) {
-        console.warn('sendOtp notice:', err)
-      }
-
-      // Navigate to OTP verification page
-      navigate(routePaths.auth.otp, {
-        state: {
-          mobile: cleanMobile,
-          countryCode: selectedCountry.code,
-        },
-      })
+      await authFlowService.sendOtp(cleanMobile)
+      setAuthMode('otp')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to proceed. Please try again.')
     } finally {
@@ -87,109 +66,174 @@ export const SignInCard = ({ initialMobile = '' }: SignInCardProps) => {
     }
   }
 
-  const handlePanSignIn = async () => {
-    const cleanMobile = mobile.replace(/\D/g, '').trim() || '9867041255'
-    setMobile(cleanMobile)
+  const handleVerifyOtp = async (otp: string) => {
     setError(null)
     setIsSubmitting(true)
     try {
-      await authFlowService.sendOtp(cleanMobile)
-      navigate(routePaths.auth.otp, {
-        state: {
-          mobile: cleanMobile,
-          countryCode: selectedCountry.code,
-        },
+      const session = await authFlowService.verifyOtp({
+        mobile: cleanMobile,
+        otp,
       })
+
+      const isAlreadyRegistered = authFlowService.isRegistered(cleanMobile)
+      if (isAlreadyRegistered) {
+        setAuthMode('passcode')
+      } else {
+        authStorage.setTokens(session.tokens)
+        authStorage.setUser(session.user)
+        setUser(session.user)
+        navigate(routePaths.auth.register, {
+          state: { mobile: cleanMobile },
+        })
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to sign in.')
+      setError(err instanceof Error ? err.message : 'Invalid OTP. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
+  const handleResendOtp = async () => {
+    setError(null)
+    try {
+      await authFlowService.sendOtp(cleanMobile)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to resend code.')
+    }
+  }
+
+  const handlePasscodeLogin = async (passcode: string) => {
+    setError(null)
+    setIsSubmitting(true)
+    try {
+      const session = await authFlowService.verifyPasscode({
+        mobile: cleanMobile,
+        passcode,
+      })
+      authStorage.setTokens(session.tokens)
+      authStorage.setUser(session.user)
+      setUser(session.user)
+      navigate(routePaths.dashboard)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Incorrect passcode. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleForgotPasscode = async () => {
+    setError(null)
+    setIsSubmitting(true)
+    try {
+      authStorage.removeRegisteredUser(cleanMobile)
+      signOut()
+      await authFlowService.sendOtp(cleanMobile)
+      setAuthMode('otp')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send OTP. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleChangeNumber = () => {
+    setAuthMode('mobile')
+    setError(null)
+  }
+
+  const handleGoogleLogin = () => {
+    // Graceful Google OAuth trigger
+    window.location.href = '#google-login'
+  }
+
+  const getSubtitle = () => {
+    if (authMode === 'otp') return 'Enter the 6-digit OTP sent to your mobile number'
+    if (authMode === 'passcode') return 'Enter your passcode to sign in to your account'
+    return 'Sign in to continue to your TaxEdge account'
+  }
+
   return (
     <div className="sign-in-card">
-      <header className="sign-in-card__header">
-        <h2 className="sign-in-card__title">Sign in</h2>
-        <p className="sign-in-card__subtitle">
-          We will send a 6-digit code to your registered mobile number.
-        </p>
-      </header>
-
-      <form className="sign-in-card__form" onSubmit={handleSendOtp} noValidate>
-        <div className="sign-in-card__field">
-          <label htmlFor="mobile-input" className="sign-in-card__label">
-            Mobile number
-          </label>
-          <div className="sign-in-card__input-group">
-            <button
-              type="button"
-              className="sign-in-card__country-select"
-              title={`Country: ${selectedCountry.label}. Click to switch.`}
-              onClick={toggleCountry}
-            >
-              <span>{selectedCountry.code}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-
-            <div className="sign-in-card__input-wrapper">
-              <input
-                id="mobile-input"
-                type="tel"
-                className={`sign-in-card__input ${error ? 'sign-in-card__input--error' : ''}`}
-                placeholder="Enter mobile number"
-                value={mobile}
-                onChange={(e) => handleMobileChange(e.target.value)}
-                maxLength={10}
-                autoComplete="tel-national"
-                autoFocus
-              />
+      {authMode === 'mobile' ? (
+        <div className="sign-in-card__brand sign-in-card__brand--stacked">
+          <img
+            src="/assets/images/taxedge-brand-icon.png"
+            alt="TaxEdge"
+            className="sign-in-card__brand-icon sign-in-card__brand-icon--stacked"
+          />
+          <div className="sign-in-card__brand-text-block sign-in-card__brand-text-block--stacked">
+            <div className="sign-in-card__brand-title">
+              <span className="brand-title--navy">Tax</span>
+              <span className="brand-title--orange">Edge</span>
+            </div>
+            <span className="sign-in-card__brand-sub">FIN SOLUTIONS</span>
+          </div>
+        </div>
+      ) : (
+        <div className="sign-in-card__brand sign-in-card__brand--inline">
+          <div className="sign-in-card__brand-row">
+            <img
+              src="/assets/images/taxedge-brand-icon.png"
+              alt="TaxEdge"
+              className="sign-in-card__brand-icon"
+            />
+            <div className="sign-in-card__brand-divider" />
+            <div className="sign-in-card__brand-text-block">
+              <div className="sign-in-card__brand-title">
+                <span className="brand-title--navy">Tax</span>
+                <span className="brand-title--orange">Edge</span>
+              </div>
+              <span className="sign-in-card__brand-sub">FIN SOLUTIONS</span>
             </div>
           </div>
-
-          {error && <span className="sign-in-card__error-msg">{error}</span>}
         </div>
+      )}
 
-        <button
-          type="submit"
-          className="sign-in-card__btn-primary"
-          disabled={isSubmitting}
-          onClick={handleSendOtp}
-        >
-          <span>{isSubmitting ? 'Continuing...' : 'Continue'}</span>
-          {!isSubmitting && (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          )}
-        </button>
+      <header className={`sign-in-card__header ${authMode === 'mobile' ? 'sign-in-card__header--stacked' : ''}`}>
+        <h2 className="sign-in-card__title">Welcome Back 👋</h2>
+        <p className="sign-in-card__subtitle">{getSubtitle()}</p>
+      </header>
 
-        <div className="sign-in-card__divider">or</div>
+      {authMode === 'mobile' && (
+        <MobileEntryView
+          mobile={mobile}
+          onMobileChange={handleMobileChange}
+          selectedCountryCode={selectedCountry.code}
+          onToggleCountry={handleToggleCountry}
+          onSubmit={handleMobileSubmit}
+          isSubmitting={isSubmitting}
+          error={error}
+          onGoogleLogin={handleGoogleLogin}
+        />
+      )}
 
-        <button
-          type="button"
-          className="sign-in-card__btn-secondary"
-          onClick={handlePanSignIn}
-        >
-          <span className="sign-in-card__btn-secondary-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </span>
-          <span>Sign in with PAN</span>
-        </button>
-      </form>
+      {authMode === 'otp' && (
+        <OtpVerificationView
+          mobile={cleanMobile}
+          countryCode={selectedCountry.code}
+          onChangeNumber={handleChangeNumber}
+          onVerifyOtp={handleVerifyOtp}
+          onResendOtp={handleResendOtp}
+          isSubmitting={isSubmitting}
+          error={error}
+          onGoogleLogin={handleGoogleLogin}
+        />
+      )}
 
-      <p className="sign-in-card__footer">
-        New to TaxEdge?
-        <Link to={routePaths.auth.createProfile} className="sign-in-card__link">
-          Create an account
-        </Link>
-      </p>
+      {authMode === 'passcode' && (
+        <PasscodeLoginView
+          mobile={cleanMobile}
+          countryCode={selectedCountry.code}
+          onChangeNumber={handleChangeNumber}
+          onLogin={handlePasscodeLogin}
+          isSubmitting={isSubmitting}
+          error={error}
+          onForgotPasscode={handleForgotPasscode}
+          onGoogleLogin={handleGoogleLogin}
+        />
+      )}
     </div>
   )
 }
+
+export default SignInCard

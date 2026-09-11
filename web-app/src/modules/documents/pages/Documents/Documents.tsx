@@ -70,19 +70,26 @@ export const Documents = () => {
 
       {!isLoading && !error && (
         <Card title="Stored documents" subtitle="Official identity, financial and statutory files linked to your TaxEdge account">
-          <ul className="documents-page__list">
-            {allDocuments.map((item) => (
-              <li className="documents-page__row" key={item.id}>
-                <div>
-                  <p className="documents-page__row-title">{item.title}</p>
-                  <p className="documents-page__row-meta">
-                    {item.reference} · {formatDate(item.updatedAt)}
-                  </p>
-                </div>
-                <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
-              </li>
-            ))}
-          </ul>
+          {allDocuments.length === 0 ? (
+            <EmptyState
+              title="No Documents Stored"
+              description="Upload identity, financial, or statutory files to store them securely in your vault."
+            />
+          ) : (
+            <ul className="documents-page__list">
+              {allDocuments.map((item) => (
+                <li className="documents-page__row" key={item.id}>
+                  <div>
+                    <p className="documents-page__row-title">{item.title}</p>
+                    <p className="documents-page__row-meta">
+                      {item.reference} · {formatDate(item.updatedAt)}
+                    </p>
+                  </div>
+                  <Badge tone={STATUS_TONES[item.status]}>{STATUS_LABELS[item.status]}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
     </div>
